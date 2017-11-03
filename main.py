@@ -46,6 +46,7 @@ def layers(vgg_layer3_out, vgg_layer4_out, vgg_layer7_out, num_classes):
                                   num_classes,
                                   1,
                                   padding='same',
+                                  kernel_initializer=tf.random_normal_initializer(stddev=0.01),
                                   kernel_regularizer=tf.contrib.layers.l2_regularizer(1e-3))
     # upsampling
     layer4_in = tf.layers.conv2d_transpose(
@@ -54,12 +55,14 @@ def layers(vgg_layer3_out, vgg_layer4_out, vgg_layer7_out, num_classes):
         4,
         strides=2,
         padding='same',
+        kernel_initializer=tf.random_normal_initializer(stddev=0.01),
         kernel_regularizer=tf.contrib.layers.l2_regularizer(1e-3))
     # 1x1 convolution
     layer4_in2 = tf.layers.conv2d(vgg_layer4_out,
                                   num_classes,
                                   1,
                                   padding='same',
+                                  kernel_initializer=tf.random_normal_initializer(stddev=0.01),
                                   kernel_regularizer=tf.contrib.layers.l2_regularizer(1e-3))
     # skip connection
     layer4_out = tf.add(layer4_in, layer4_in2)
@@ -70,6 +73,7 @@ def layers(vgg_layer3_out, vgg_layer4_out, vgg_layer7_out, num_classes):
         4,
         strides=2,
         padding='same',
+        kernel_initializer=tf.random_normal_initializer(stddev=0.01),
         kernel_regularizer=tf.contrib.layers.l2_regularizer(1e-3))
     # 1x1 convolution
     layer3_in2 = tf.layers.conv2d(vgg_layer3_out,
@@ -86,6 +90,7 @@ def layers(vgg_layer3_out, vgg_layer4_out, vgg_layer7_out, num_classes):
         16,
         strides=8,
         padding='same',
+        kernel_initializer=tf.random_normal_initializer(stddev=0.01),
         kernel_regularizer=tf.contrib.layers.l2_regularizer(1e-3))
 
     return output
@@ -132,7 +137,7 @@ def train_nn(sess, epochs, batch_size, get_batches_fn, train_op, cross_entropy_l
             _, loss = sess.run([train_op, cross_entropy_loss],
                                feed_dict={input_image: image, correct_label: label,
                                           keep_prob: 0.75, learning_rate: 1e-4})
-            print("Epoch {0} loss: = {1}".format(epoch, loss))
+            print("Epoch {0} loss: {1}".format(epoch, loss))
 
 tests.test_train_nn(train_nn)
 
