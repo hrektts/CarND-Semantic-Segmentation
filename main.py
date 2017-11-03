@@ -207,6 +207,12 @@ def run():
                                       keep_prob,
                                       input_image)
 
+        # Save the model
+        saver = tf.train.Saver()
+        saver.save(sess, 'checkpoints/model.ckpt')
+        saver.export_meta_graph('checkpoints/model.meta')
+        tf.train.write_graph(sess.graph_def, 'checkpoints/', 'model.pb', False)
+
         # OPTIONAL: Apply the trained model to a video
 
 
