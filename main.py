@@ -80,6 +80,7 @@ def layers(vgg_layer3_out, vgg_layer4_out, vgg_layer7_out, num_classes):
                                   num_classes,
                                   1,
                                   padding='same',
+                                  kernel_initializer=tf.truncated_normal_initializer(stddev=0.01),
                                   kernel_regularizer=tf.contrib.layers.l2_regularizer(1e-3))
     # skip connection
     layer3_out = tf.add(layer3_in, layer3_in2)
@@ -110,8 +111,10 @@ def optimize(nn_last_layer, correct_label, learning_rate, num_classes):
     label = tf.reshape(correct_label, (-1, num_classes))
     cross_entropy_loss = tf.reduce_mean(
         tf.nn.softmax_cross_entropy_with_logits(logits=logits, labels=label))
+    reg_loss = tf.get_collection(tf.GraphKeys.REGULARIZATION_LOSSES)
+    loss_fn = cross_entropy_loss + tf.reduce_sum(reg_loss)
     optimizer = tf.train.AdamOptimizer(learning_rate=learning_rate)
-    train_op = optimizer.minimize(cross_entropy_loss)
+    train_op = optimizer.minimize(loss_fn)
 
     return logits, train_op, cross_entropy_loss
 tests.test_optimize(optimize)
@@ -181,7 +184,7 @@ def run():
                                                         num_classes)
 
         # parameters
-        epochs = 15
+        epochs = 20
         batch_size = 4
 
         # Train NN using the train_nn function
