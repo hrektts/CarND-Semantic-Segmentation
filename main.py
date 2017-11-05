@@ -176,7 +176,7 @@ def run():
                                                         num_classes)
 
         # parameters
-        epochs = 15
+        epochs = 25
         batch_size = 4
 
         # Train NN using the train_nn function
